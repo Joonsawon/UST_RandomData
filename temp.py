@@ -4,6 +4,5 @@ Spyder Editor
 
 test code
 
-This is a temporary script file.
-vfvbf"""
+This is a temporary script file."""
 
