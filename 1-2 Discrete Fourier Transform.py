@@ -28,7 +28,12 @@ plt.grid(True)
 
 #%%
 signal_fft = np.fft.fft(signal)
+signal_fft_M = np.sqrt((signal_fft.real)**2+(signal_fft.imag)**2)
+# magnitude = np.abs(signal_fft)
 
+plt.figure(figsize=(32,8))
+plt.bar(np.arange(1,129),signal_fft_M[1:129])
+plt.grid(True)
 
 #%%
 fig = px.line(x = time, y=a, markers=True, title ='사각파')
