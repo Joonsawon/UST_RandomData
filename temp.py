@@ -13,7 +13,7 @@ This is a temporary script file."""
 
 #!git push -u origin main
 !git add -A
-!git commit -m "FFT plot"
+!git commit -m "FFT comparing"
 !git push origin main
 # 원격저장소 확인
 
