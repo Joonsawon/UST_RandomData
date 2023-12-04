@@ -48,11 +48,12 @@ for i in range(1,5):
 
 #%% sin 함수의 연속 푸리에 계수, DFT 비교
 
-N = 4
-dt = 1 #단위: s
+N = 40
+dt = 0.1 #단위: s
 time = np.arange(0,N)*dt
 T = N*dt #주기
 signal = np.cos(2*np.pi/T*time)
+
 
 plt.figure(figsize=(8,2))
 plt.plot(time,signal)
@@ -62,7 +63,7 @@ signal_fft_M = np.sqrt((signal_fft.real)**2+(signal_fft.imag)**2)
 signal_ifft = np.fft.ifft(signal_fft)
 signal_ifft_M = np.abs(signal_ifft)
 
-plt.plot(signal_ifft_M)
+plt.plot(time,signal_ifft_M)
 
 #%%
 fig = px.line(x = time, y=a, markers=True, title ='사각파')
