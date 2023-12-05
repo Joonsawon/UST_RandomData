@@ -17,7 +17,6 @@ import plotly.graph_objs as go
 N = 256
 dt = 0.1 #단위: s
 time = np.arange(1,N+1)*dt
-T = N*dt #주기
 signal = np.ones(N)
 signal[N//3:] = -np.ones(N-N//3)
 
@@ -28,7 +27,7 @@ plt.grid(True)
 
 #%%
 signal_fft = np.fft.fft(signal)
-signal_fft_M = np.sqrt((signal_fft.real)**2+(signal_fft.imag)**2)
+signal_fft_M = np.sqrt((signal_fft.real)**2+(signal_fft.imag)**2))#*(2/N)
 # magnitude = np.abs(signal_fft)
 
 plt.figure(figsize=(32,8))
@@ -48,7 +47,7 @@ for i in range(1,5):
 
 #%% sin 함수의 연속 푸리에 계수, DFT 비교
 
-N = 40
+N = 64
 dt = 0.1 #단위: s
 time = np.arange(0,N)*dt
 T = N*dt #주기
@@ -64,6 +63,26 @@ signal_ifft = np.fft.ifft(signal_fft)
 signal_ifft_M = np.abs(signal_ifft)
 
 plt.plot(time,signal_ifft_M)
+
+#%% Normalized FFT
+
+N = 64
+dt = 0.1 #단위: s
+time = np.arange(0,N)*dt
+T = N*dt #주기
+signal = np.cos(2*np.pi/T*time)
+
+#plt.plot(time,signal)
+
+signal_fft = np.fft.fft(signal)
+signal_fft_M = np.sqrt((signal_fft.real)**2+(signal_fft.imag)**2)*(2/N)
+signal_ifft = np.fft.ifft(signal_fft)
+signal_ifft_M = np.abs(signal_ifft)
+
+plt.figure(figsize=(8,2))
+plt.bar(np.arange(1,129),signal_fft_M[1:129])
+
+
 
 #%%
 fig = px.line(x = time, y=a, markers=True, title ='사각파')
