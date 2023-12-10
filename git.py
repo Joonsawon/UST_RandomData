@@ -10,7 +10,7 @@ This is a temporary script file."""
 
 #!git push -u origin main
 !git add -A
-!git commit -m "주가 데이터 fft"
+!git commit -m "텀프로젝트 진행 데이터 타입 판별"
 !git push origin main
 # 원격저장소 확인
 
