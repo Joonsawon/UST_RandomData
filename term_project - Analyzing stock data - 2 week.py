@@ -16,14 +16,87 @@ from plotly.offline import plot
 # 1. 데이터 불러오기
 한달데이터 = pd.read_csv('C:/GitHub/UST_RandomData/갤럭시아머니트리.csv',index_col=0) #인덱스로 사용할 컬럼 설정
 
-첫날데이터 = 한달데이터[pd.DatetimeIndex(한달데이터.index).day == 7]  #11월 7일 데이터
+# 첫번째 데이터 불러오기
+# 9시 0분 데이터...
+첫데이터들 = 한달데이터[(pd.DatetimeIndex(한달데이터.index).hour == 9) & (pd.DatetimeIndex(한달데이터.index).minute == 0)] 
+# 그런데 이런식으로 하면 나머지 데이터들을 불러올 때 너무 힘들 것 같다. 
+# 하루 데이터의 수를 카운트 해서 첫번째+데이터 수 이런식으로 불러오는 것이 반복문 처리하기에 좋을 듯 하다.
+# 하루 데이터 수는
 
+첫날데이터 = 한달데이터[pd.DatetimeIndex(한달데이터.index).day == 4]  #12월 4일 데이터
+둘째데이터 = 한달데이터[pd.DatetimeIndex(한달데이터.index).day == 7]  #11월 7일 데이터
 # 한달데이터.index → '2023-11-07 09:00:00+09:00' 와 같은 정보를 출력
 # pd.DatetimeIndex(한달데이터.index).day → index 중 day에 해당하는 int 값을 출력
 # pd.DatetimeIndex(한달데이터.index).day == 7 → index 중 day 값이 7인 low만 True, 나머지는 False
 # 한달데이터[pd.DatetimeIndex(한달데이터.index).day == 7] → index.day 값이 7인 정보만 출력
+# 7,8일 357개. 4일 358개. .... 그때 그 때 다르냐...
+# 어디가 다른걸까
+# 근데 60*6 = 360개가 되어야 하는데 한두개 씩 데이터가 빠진 것 같다..ㅎ
 
-## 노노, 첫날 데이터
+# 첫 데이터들을 살펴보니 19개 밖에 없다. 28개여야 하는데.. 
+# 9시 1분 데이터를 보자
+둘데이터들 = 한달데이터[(pd.DatetimeIndex(한달데이터.index).hour == 9) & (pd.DatetimeIndex(한달데이터.index).minute == 1)] 
+
+#가 아니고 평일만 치면 20일 인데 16일에 수능 때문에 10시부터 장 시작.. 16일 데이터는 제거하고 가자. 
+# 그러면 19일 데이터들의 시작 데이터들의 평균은
+첫데이터들.Open.mean() # 6997.368421052632 이 나온다. 
+
+
+#%% t에 따른 Mean Value 그래프를 그려보자
+
+# 일단 날짜 인덱스를 저장하자
+날짜들 = pd.DatetimeIndex(첫데이터들.index).day
+
+#날짜별로 정제한 데이터 중 1번째 데이터만 수집. 
+#시간으로 하면 편하지만, 날짜별로 없는 시간대가 있기 때문에 이 방식으로 진행.
+# 우선, 첫번째 데이터들의 평균
+저장소 = [] # 날짜별 첫번째 데이터를 담을 리스트 변수 생성
+for i in 날짜들: 
+    하루데이터 = 한달데이터[pd.DatetimeIndex(한달데이터.index).day == i] # i번째 날의 데이터 받기
+    저장소.append(하루데이터.Open[0]) # Open 데이터 중 첫번째 데이터만 담기
+
+저장소 = pd.DataFrame(저장소)
+저장소.mean()
+
+
+#%% 이제 시간순으로 300개 데이터의 Mean Value를 계산하고 그래프 그려보자
+
+
+평균값 = [] # 시간별 앙상블 평균을 담을 리스트 변수
+
+for j in range(300):
+    저장소 = [] # 날짜별 첫번째 데이터를 담을 리스트 변수 초기화
+    for i in 날짜들: 
+        하루데이터 = 한달데이터[pd.DatetimeIndex(한달데이터.index).day == i] # i번째 날의 데이터 받기
+        저장소.append(하루데이터.Open[j]) # Open 데이터 중 첫번째 데이터만 담기 (좀 비효율적이긴 하네)
+    평균값.append(pd.DataFrame(저장소).mean()[0])
+# 오래걸림 ㅋㅋㅋ 그냥 넘파이로 할걸
+
+
+#%%# 데이터프레임으로 받아서 인덱스별 평균을 내보자
+
+저장소 = pd.DataFrame([]) # 날짜별 첫번째 데이터를 담을 리스트 변수 초기화
+for i in 날짜들: 
+    하루데이터 = 한달데이터[pd.DatetimeIndex(한달데이터.index).day == i] # i번째 날의 데이터 받기
+    하루데이터.reset_index(inplace=True,drop=True)
+    저장소[f'{i}']=하루데이터.Open[0:300] # Open 데이터 중 첫번째 데이터만 담기 (좀 비효율적이긴 하네)
+    
+# 첫째날을 제외하고 NaN이 뜨는 문제 발생. 아마도 index가 안맞아서 그런듯. index제거를 추가하자.
+# 성공!
+
+#%% 이제 행별 평균을 구해보자.
+
+mean_value = 저장소.mean(axis='columns') # 300개 데이터가 나오는 것을 확인할 수 있다. 
+
+#그래프를 그려볼까?
+fig = px.line(mean_value, markers=True, title ='장 시간에 따른 주가의 앙상블 평균')
+fig.update_xaxes(title ='index')
+fig.update_yaxes(title = 'Mean value / ₩')
+plot(fig)
+
+
+#%%
+
 
 
 # 일단 하루 데이터의 FFT를 해보고, 그 의미를 분석해보자. 
