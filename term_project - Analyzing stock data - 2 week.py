@@ -160,6 +160,13 @@ plot(fig)
 
 한달데이터시가 = 한달데이터.Open
 한달데이터시가.reset_index(inplace=True,drop=True)
+
+fig = px.line(한달데이터시가, markers=False, title ='시간별 주가 추이')
+fig.update_xaxes(title ='Time / min')
+fig.update_yaxes(title = 'Open price / ₩')
+plot(fig)
+
+
 f, t, Zxx = sp.signal.stft(한달데이터시가,fs=0.1666666,nperseg =30)
 fig = px.imshow(img=np.abs(Zxx), title ='STFT')
 fig.update_xaxes(title ='Time')
@@ -176,9 +183,9 @@ plot(fig)
 #%% 무슨 의미인지는 잘 모르겠다. 우선 x,y 스케일을 잘 맞춰보자. 
 
 
-fig = px.line(한달데이터시가, markers=True, title ='한달 데이터')
-fig.update_xaxes(title ='index')
-fig.update_yaxes(title = 'Change rate / %')
+fig = px.line(한달데이터시가, markers=False, title ='한달 데이터')
+fig.update_xaxes(title ='Time / min')
+fig.update_yaxes(title = 'Openprice / won')
 plot(fig)
 
 #. 1. x,y 스케일을 맞춰주고,
@@ -186,23 +193,35 @@ plot(fig)
 
 #%%
 
+time_interval = 60
+f_s = 1/time_interval
+
+f, t, Zxx = sp.signal.stft(한달데이터시가[5507:5841], fs=f_s, nperseg =20, noverlap=19, nfft=2**8 )
+t2m = t/60
+
+a = np.abs(Zxx)
+#a = a[2:,1:-2]
+f2mf = f*10000
+
+fig = px.imshow(x=t2m,y=f2mf,img=a, title ='STFT')
+fig.update_xaxes(title ='Time / min')
+fig.update_yaxes(title = 'frequency / Hz')
+plot(fig)
 
 
+# 노멀라이즈 해서 비교해보자
+
+fig = px.imshow(x=t2m,y=f2uf,img=a/a.max(), title ='STFT')
+fig.update_xaxes(title ='Time / min')
+fig.update_yaxes(title = 'frequency / Hz')
+plot(fig)
+
+sp.signal. check_COLA ( window = 'hann' , nperseg = 20 , noverlap=19 , tol = 1e-10 )
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+# 5507-5840
+# 6744-6767
+# 
 
 
 
