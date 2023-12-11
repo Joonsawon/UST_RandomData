@@ -4,7 +4,7 @@ save_data_on_exit = True
 save_history = True
 save_non_project_files = False
 project_type = 'empty-project-type'
-recent_files = ['temp.py', '1-2 Discrete Fourier Transform.py', 'homework_2.py']
+recent_files = ['git.py', 'homework_2.py', '..\\..\\Desktop\\표준연\\01.연구\\_코드\\_데이터 생성\\23.01.18 (시즌5) OPD 분석 ANN\\23.03.13 OPD에 따른 분광간섭신호 생성_2.py', 'homework_1 (DFT).py', 'Term_project - Analyzing stock data.py']
 
 [main]
 version = 0.2.0
