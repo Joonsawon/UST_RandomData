@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 from plotly.offline import plot
+import scipy as sp
 
 #%% Mean value, Autocorrelation 계산
 # 한달 데이터를 앙상블로 함.
@@ -95,9 +96,145 @@ fig.update_yaxes(title = 'Mean value / ₩')
 plot(fig)
 
 
+
+#%% 주가 데이터 전체 날짜별 플롯
+
+
+fig = px.line(저장소, markers=False, title ='날짜별 주가 추이')
+fig.update_xaxes(title ='index')
+fig.update_yaxes(title = 'Open price / ₩')
+plot(fig)
+
+
+#%% 날짜별 변동률(시작가 기준)
+
+변동률 = pd.DataFrame([]) # 날짜별 첫번째 데이터를 담을 리스트 변수 초기화
+for i in 날짜들: 
+    하루데이터 = 한달데이터[pd.DatetimeIndex(한달데이터.index).day == i] # i번째 날의 데이터 받기
+    하루데이터.reset_index(inplace=True,drop=True)
+    변동률[f'{i}']=하루데이터.Open[0:300]/하루데이터.Open[0]*100 # 매일의 시가로 나눔
+    
+
+fig = px.line(변동률, markers=False, title ='날짜별 주가 추이')
+fig.update_xaxes(title ='index')
+fig.update_yaxes(title = 'Open price / ₩')
+plot(fig)
+
+
+# 변동률의 앙상블 평균은?
+
+변동률_mean_value = 변동률.mean(axis='columns') # 300개 데이터가 나오는 것을 확인할 수 있다. 
+
+#그래프를 그려볼까?
+fig = px.line(변동률_mean_value, markers=True, title ='장 시간에 따른 주가 변동률의 앙상블 평균')
+fig.update_xaxes(title ='index')
+fig.update_yaxes(title = 'Change rate / %')
+plot(fig)
+
+
+
+
+
+#%% STFT
+
+# 상승장이 확실한 29일 데이터 불러오기
+
+하루데이터_29 = 한달데이터[pd.DatetimeIndex(한달데이터.index).day == 29].Open
+하루데이터_29.reset_index(inplace=True,drop=True) # 날짜 인덱스 제거
+하루데이터_29= 하루데이터_29[0:256]
+
+하루데이터_29_stft = sp.signal.stft(하루데이터_29)
+
+import matplotlib.pyplot as plt
+
+f, t, Zxx = sp.signal.stft(하루데이터_29,fs=0.1666666,nperseg =5, nfft =100)
+a= np.abs(Zxx)
+fig = px.imshow(img=np.abs(Zxx), title ='STFT')
+fig.update_xaxes(title ='Time')
+fig.update_yaxes(title = 'frequency / Hz')
+plot(fig)
+
+
+
+#%% 하루는 데이터가 300 여개라 정보가 부족하다.. 한달 전체의 데이터에 대해 분석해보자
+
+한달데이터시가 = 한달데이터.Open
+한달데이터시가.reset_index(inplace=True,drop=True)
+f, t, Zxx = sp.signal.stft(한달데이터시가,fs=0.1666666,nperseg =30)
+fig = px.imshow(img=np.abs(Zxx), title ='STFT')
+fig.update_xaxes(title ='Time')
+fig.update_yaxes(title = 'frequency / Hz')
+plot(fig)
+
+import plotly.graph_objects as go
+fig = go.Figure(data=[go.Surface(z=np.abs(Zxx))])
+plot(fig)
+
+fig = px.scatter_3d(np.abs(Zxx), title ='STFT')
+plot(fig)
+
+#%% 무슨 의미인지는 잘 모르겠다. 우선 x,y 스케일을 잘 맞춰보자. 
+
+
+fig = px.line(한달데이터시가, markers=True, title ='한달 데이터')
+fig.update_xaxes(title ='index')
+fig.update_yaxes(title = 'Change rate / %')
+plot(fig)
+
+#. 1. x,y 스케일을 맞춰주고,
+# 2. 급등하는 구간의 데이터를 분석해보자. 
+
 #%%
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#%%
+
+
+
+
+
+
+
+
+
+#%%
 
 # 일단 하루 데이터의 FFT를 해보고, 그 의미를 분석해보자. 
 
