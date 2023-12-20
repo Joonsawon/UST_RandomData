@@ -10,7 +10,7 @@ This is a temporary script file."""
 
 #!git push -u origin main
 !git add -A
-!git commit -m "힐버트 변환 수행"
+!git commit -m "최종 코드 정리"
 !git push origin main
 # 원격저장소 확인
 
