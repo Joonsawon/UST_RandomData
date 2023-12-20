@@ -10,7 +10,7 @@ This is a temporary script file."""
 
 #!git push -u origin main
 !git add -A
-!git commit -m "한달 데이터에 STFT 적용 분석 중"
+!git commit -m "힐버트 변환 수행"
 !git push origin main
 # 원격저장소 확인
 

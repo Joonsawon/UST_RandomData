@@ -19,7 +19,7 @@ from scipy.signal import hilbert, chirp
 한달데이터 = pd.read_csv('C:/GitHub/UST_RandomData/갤럭시아머니트리.csv',index_col=0) #인덱스로 사용할 컬럼 설정
 
 
-첫날데이터 = 한달데이터[pd.DatetimeIndex(한달데이터.index).day == 4]  #12월 4일 데이터
+첫날데이터 = 한달데이터[pd.DatetimeIndex(한달데이터.index).day == 20]  #12월 4일 데이터
 
 # 한달데이터.index → '2023-11-07 09:00:00+09:00' 와 같은 정보를 출력
 # pd.DatetimeIndex(한달데이터.index).day → index 중 day에 해당하는 int 값을 출력
@@ -38,6 +38,8 @@ from scipy.signal import hilbert, chirp
 time_interval = 60
 f_s = 1/time_interval
 선택구간 = 한달데이터시가[5507:5841]
+
+선택구간 = 첫날데이터.Open
 
 f, t, Zxx = sp.signal.stft(선택구간, fs=f_s, nperseg =20, noverlap=19, nfft=2**8 )
 t2m = t/60
@@ -58,7 +60,7 @@ fig.update_xaxes(title ='Time / min')
 fig.update_yaxes(title = 'Openprice / won')
 plot(fig)
 
-
+선택구간 = 선택구간 - 선택구간.mean()
 
 analytic_signal = hilbert(선택구간)
 amplitude_envelope = np.abs(analytic_signal)
@@ -240,7 +242,7 @@ rise = df_day[df_day['Open'] < df_day['Close']]
 
 # 특정 날짜 데이터 가져오기
 
-a = concat[pd.DatetimeIndex(concat.index).day == 29]  #11월 7일 데이터
+a = concat[pd.DatetimeIndex(concat.index).day == 20]  #11월 7일 데이터
 
 # 일단 하루 데이터의 FFT를 해보고, 그 의미를 분석해보자. 
 
